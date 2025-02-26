@@ -15,7 +15,7 @@ module.exports = async function (context, myTimer) {
         context.log('Weather data received: ', response.data);
 
         // 눈 또는 비가 내리면 Slack 알림 전송
-        if (weather !== "Rain" || weather === "Snow") {
+        if (weather === "Rain" || weather === "Snow") {
             await axios.post(SLACK_WEBHOOK_URL, {
                 text: `🚨 [날씨 알림] 현재 ${CITY}에 ${weather === "Rain" ? "비가" : "눈이"} 내리고 있습니다. ☔❄`
             });
@@ -24,9 +24,16 @@ module.exports = async function (context, myTimer) {
             await axios.post(SLACK_WEBHOOK_URL, {
                 "text": ":sunny: *오늘은 맑고 화창한 날씨입니다!* :sunny: \n\n푸른 하늘과 부드러운 바람이 기분 좋게 해주는 하루입니다. 햇살을 만끽하세요! :sun_behind_small_cloud:"
             });
+        } else if (weather === "Mist") {
+            await axios.post(SLACK_WEBHOOK_URL, {
+                text: `🚨 [날씨 알림] 현재 ${CITY}에 안개가 꼈습니다. ☁`
+            });
+        } else if (weather === "Clouds") {
+            await axios.post(SLACK_WEBHOOK_URL, {
+                text: `🚨 [날씨 알림] 현재 ${CITY}는 흐립니다. ☁`
+            });
         } else {
             context.log(`날씨 상태: ${weather} (알림 없음)`);
-
         }
     } catch (error) {
         context.log(`오류 발생: ${error.message}`);
